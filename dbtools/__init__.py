@@ -19,6 +19,15 @@ retry_timeout = 30
 class DatabaseConnection(object):
     """
     Context manager for odbc database connections.
+
+    Usage:
+        with DatabaseConnection('DSN=example_dsn;') as cursor:
+            try:
+                cursor.execute(query)
+            except:
+                raise
+            else:
+                cursor.commit()
     """
 
     def __init__(self, connection_string):
@@ -41,13 +50,22 @@ class DatabaseConnection(object):
         return bool(exc_type)
 
 
-def _retry_on_lock(f):
+def retry_on_lock(f):
     """
     Continue to retry transaction while "lock" is in the error message.
 
     This should include deadlocks and lock wait timeouts.
-    :param f: function to wrap
 
+    Usage:
+
+        @retry_on_lock
+        def insert_data(data_tuple):
+            query = "INSERT INTO example VALUES (?, ?, ?);"
+            with DatabaseConnection('DSN=example_dsn;') as cursor:
+                cursor.execute(query, data_tuple)
+                cursor.commit()
+
+    :param f: function to wrap
     :return:
     """
     def inner(*args, **kwargs):
