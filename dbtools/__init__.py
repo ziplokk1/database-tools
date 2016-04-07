@@ -30,8 +30,8 @@ class DatabaseConnection(object):
                 cursor.commit()
     """
 
-    def __init__(self, connection_string):
-        self.database = pyodbc.connect(connection_string)
+    def __init__(self, connection_string, autocommit=False, ansi=False, timeout=0, **kwargs):
+        self.database = pyodbc.connect(connection_string, autocommit=autocommit, ansi=ansi, timeout=timeout, **kwargs)
         self.cursor = self.database.cursor()
 
     def close(self):
