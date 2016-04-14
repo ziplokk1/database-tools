@@ -47,7 +47,7 @@ class DatabaseConnection(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
-        return bool(exc_type)
+        return not bool(exc_type)
 
 
 def retry_on_lock(f):
